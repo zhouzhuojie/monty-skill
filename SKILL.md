@@ -61,6 +61,14 @@ Then use in monty:
 uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "result = random_numbers(1000); print(f'Mean: {sum(result)/len(result):.4f}')" -f functions.py
 ```
 
+## Adding Extra Dependencies
+
+If your external functions need packages like `cryptography` or `requests`, use `uv run --with`:
+
+```bash
+uv run --with cryptography --with requests https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "encrypt('secret')" -f functions.py
+```
+
 ## Install for Agents
 
 ```bash

@@ -2,26 +2,10 @@
 
 Run Python code in a secure sandbox using [pydantic-monty](https://github.com/pydantic/monty).
 
-## How It Works
-
-monty-skill executes Python code in an isolated environment where:
-- No filesystem access
-- No network access
-- No environment variable access
-
-External functions (defined in `functions.py`) can be called from sandboxed code to enable controlled I/O, network requests, or other operations.
-
-## Usage
+## Quick Start
 
 ```bash
-# Run directly (requires chmod +x)
-./monty.py "print(2 + 2)"
-
-# Or via uv
-uv run monty.py "print(2 + 2)"
-
-# With external functions
-./monty.py "print(await greet('World'))" -f functions.py
+uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(2 + 2)"
 ```
 
 ## Options
@@ -29,34 +13,36 @@ uv run monty.py "print(2 + 2)"
 | Flag | Description |
 |------|-------------|
 | `-f FILE` | External functions file |
-| `-t SEC` | Timeout (default: 30) |
+| `-t SEC` | Timeout in seconds |
 
 ## External Functions
 
-Define async functions in `functions.py`:
+Create `functions.py` with async functions:
 
 ```python
-async def fetch(url: str) -> dict:
-    return {"data": "example"}
-
 async def greet(name: str) -> str:
     return f"Hello, {name}!"
 ```
 
-## Testing
+```bash
+curl -sL https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/functions.py > functions.py
+uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(await greet('World'))" -f functions.py
+```
 
-Tests are in `test_monty.py`:
+## Install for AI Agents
 
 ```bash
+npx skills add zhouzhuojie/monty-skill
+```
+
+## Development
+
+```bash
+git clone https://github.com/zhouzhuojie/monty-skill.git
+cd monty-skill
 uv run pytest test_monty.py -v
 ```
 
-See `test_monty.py` for more examples of supported Python features.
-
-## Requirements
-
-- Python 3.10+
-- [uv](https://github.com/astral-sh/uv)
-- pydantic-monty
+See `test_monty.py` for examples.
 
 MIT

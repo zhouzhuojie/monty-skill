@@ -7,6 +7,18 @@ description: Execute Python code in a secure sandbox using pydantic-monty. Use w
 
 Execute Python code safely without filesystem/network access.
 
+## Installation
+
+Copy to your agent's skills directory:
+
+```bash
+# For Claude
+cp -r monty-skill ~/.claude/skills/
+
+# For Pi
+cp -r monty-skill ~/.pi/agent/skills/
+```
+
 ## How It Works
 
 Code runs in an isolated environment with no filesystem/network/env access. External functions (defined in `functions.py`) enable controlled I/O.

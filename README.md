@@ -8,25 +8,34 @@ Run Python code in a secure sandbox using [pydantic-monty](https://github.com/py
 uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(2 + 2)"
 ```
 
+> **Note:** Since `uv run` downloads `monty.py` from the remote repo, the local `functions.py` does **not** exist by default. If you need external functions, create a `functions.py` file and pass it with `-f`.
+
 ## Options
 
 | Flag | Description |
 |------|-------------|
-| `-f FILE` | External functions file |
+| `-f FILE` | Path to external functions file |
 | `-t SEC` | Timeout in seconds |
 
 ## External Functions
 
-Create `functions.py` with async functions:
+Create `functions.py` with your custom async or sync functions:
 
 ```python
 async def greet(name: str) -> str:
     return f"Hello, {name}!"
 ```
 
+Then use with `-f` flag pointing to your local file:
+
+```bash
+uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(await greet('World'))" -f functions.py
+```
+
+You can download the default `functions.py` for reference:
+
 ```bash
 curl -sL https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/functions.py > functions.py
-uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(await greet('World'))" -f functions.py
 ```
 
 ## Install for AI Agents

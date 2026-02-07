@@ -13,11 +13,13 @@ Execute Python code safely without filesystem/network access.
 uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "code here"
 ```
 
+> **Note:** Since `uv run` downloads `monty.py` from the remote repo, the local `functions.py` does **not** exist by default. If you need external functions, create a `functions.py` file and pass it with `-f`.
+
 ## Options
 
 | Flag | Description |
 |------|-------------|
-| `-f FILE` | External functions file |
+| `-f FILE` | Path to external functions file (default: `functions.py`) |
 | `-t SEC` | Timeout in seconds |
 
 ## External Functions
@@ -56,7 +58,7 @@ def random_int(min_val: int, max_val: int, count: int) -> list:
 
 Then use in monty:
 ```bash
-uv run monty.py "result = random_numbers(1000); print(f'Mean: {sum(result)/len(result):.4f}')"
+uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "result = random_numbers(1000); print(f'Mean: {sum(result)/len(result):.4f}')" -f functions.py
 ```
 
 ## Install for Agents

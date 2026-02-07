@@ -1,26 +1,23 @@
 #!/bin/bash
-# Monty - Run Python code safely in a secure sandbox
-# Usage: ./monty "python_code" [OPTIONS]
+# monty - Run Python in secure sandbox
+# Usage: uv run monty "code" [OPTIONS]
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FUNCTIONS_FILE="${SCRIPT_DIR}/functions.py"
 TIMEOUT=30
+CODE=""
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -h|--help)
-            echo "Usage: ./monty \"python_code\" [OPTIONS]"
+            echo "Usage: uv run monty \"code\" [OPTIONS]"
             echo ""
             echo "Options:"
-            echo "  -f, --functions FILE    External functions file (default: ./functions.py)"
+            echo "  -f, --functions FILE    Functions file (default: ./functions.py)"
             echo "  -t, --timeout SECONDS   Timeout (default: 30)"
-            echo ""
-            echo "Examples:"
-            echo '  ./monty "print(2 + 2)"'
-            echo '  ./monty "result = await fetch(...)" -f functions.py'
             exit 0
             ;;
         -f|--functions)
@@ -38,27 +35,16 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [[ -z "$CODE" ]]; then
-    echo "Error: Python code required"
-    echo "Usage: ./monty \"python_code\""
-    exit 1
-fi
+[[ -z "$CODE" ]] && { echo "Error: code required"; exit 1; }
 
-# Find Python interpreter
-if [[ -f "${SCRIPT_DIR}/.venv/bin/python" ]]; then
-    PYTHON="${SCRIPT_DIR}/.venv/bin/python"
-else
-    PYTHON="python3"
-fi
+# Find Python
+PYTHON="${SCRIPT_DIR}/.venv/bin/python"
+[[ -f "$PYTHON" ]] || PYTHON="python3"
 
-# Check monty installation
-if ! "$PYTHON" -c "import pydantic_monty" 2>/dev/null; then
-    echo "Error: pydantic-monty not installed"
-    echo "Install: uv add pydantic-monty"
-    exit 1
-fi
+# Check monty
+"$PYTHON" -c "import pydantic_monty" 2>/dev/null || { echo "Error: pydantic-monty not installed"; echo "Install: uv add pydantic-monty"; exit 1; }
 
-# Create temp files
+# Temp files
 TEMP_SCRIPT=$(mktemp /tmp/monty_XXXXXX.py)
 TEMP_CODE=$(mktemp /tmp/monty_code_XXXXXX.py)
 trap "rm -f $TEMP_SCRIPT $TEMP_CODE" EXIT
@@ -66,58 +52,48 @@ trap "rm -f $TEMP_SCRIPT $TEMP_CODE" EXIT
 echo "$CODE" > "$TEMP_CODE"
 
 cat > "$TEMP_SCRIPT" << 'PYTHON'
-import asyncio
-import sys
+import asyncio, sys
 from pathlib import Path
 import pydantic_monty
 
-code_file = "CODE_FILE"
-functions_file = "FUNCTIONS_FILE"
+CODE_PATH, FNS_PATH = "CODE_PATH_PLACEHOLDER", "FNS_PATH_PLACEHOLDER"
+with open(CODE_PATH) as f: code = f.read().strip()
 
-with open(code_file) as f:
-    code = f.read().strip()
+funcs_code = ""
+if Path(FNS_PATH).exists():
+    with open(FNS_PATH) as f: funcs_code = f.read()
 
-functions_code = ""
-if Path(functions_file).exists():
-    with open(functions_file) as f:
-        functions_code = f.read()
-
-# Find function calls in code
 import re
 fn_names = set()
-for m in re.findall(r'\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\(', code):
-    if m not in ['print', 'len', 'str', 'int', 'float', 'bool', 'list', 'dict',
-                 'set', 'tuple', 'range', 'enumerate', 'zip', 'map', 'filter',
-                 'sorted', 'reversed', 'type', 'isinstance', 'hasattr',
-                 'getattr', 'setattr', 'delattr', 'break', 'continue', 'pass',
-                 'return', 'yield', 'raise', 'try', 'except', 'finally',
-                 'async', 'await', 'if', 'else', 'elif', 'for', 'while',
-                 'def', 'class', 'import', 'from', 'as', 'assert', 'del',
-                 'global', 'nonlocal', 'lambda', 'or', 'and', 'not', 'in',
-                 'True', 'False', 'None', 'self', 'super', '__import__']:
-        fn_names.add(m)
+for m in re.finditer(r'\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\(', code):
+    fn = m.group(1)
+    if fn not in {'print','len','str','int','float','bool','list','dict','set','tuple',
+                  'range','enumerate','zip','map','filter','sorted','reversed','type',
+                  'isinstance','hasattr','getattr','setattr','delattr','break','continue',
+                  'pass','return','yield','raise','try','except','finally','async','await',
+                  'if','else','elif','for','while','def','class','import','from','as',
+                  'assert','del','global','nonlocal','lambda','or','and','not','in',
+                  'True','False','None','self','super'}:
+        fn_names.add(fn)
 
-# Load external functions
-fns = {}
-if fn_names and functions_code:
+external_fns = {}
+if fn_names and funcs_code:
     ns = {}
-    exec(compile(functions_code, '<functions>', 'exec'), ns)
+    exec(compile(funcs_code, '<functions>', 'exec'), ns)
     for name in fn_names:
         if name in ns and callable(ns[name]):
-            fns[name] = ns[name]
+            external_fns[name] = ns[name]
 
 async def run():
     try:
-        m = pydantic_monty.Monty(
-            code, inputs=[],
-            external_functions=list(fns.keys()) if fns else [],
-            script_name='sandbox.py', type_check=False,
-            type_check_stubs=functions_code
-        )
-        result = await pydantic_monty.run_monty_async(m, external_functions=fns) if fns \
-                 else await pydantic_monty.run_monty_async(m)
-        if result and hasattr(result, 'output'):
-            print(result.output)
+        m = pydantic_monty.Monty(code, inputs=[], external_functions=list(external_fns.keys()),
+                                script_name='sandbox.py', type_check=False, type_check_stubs=funcs_code)
+        if external_fns:
+            r = await pydantic_monty.run_monty_async(m, external_functions=external_fns)
+        else:
+            r = await pydantic_monty.run_monty_async(m)
+        if r and hasattr(r, 'output'):
+            print(r.output)
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
@@ -125,17 +101,24 @@ async def run():
 asyncio.run(run())
 PYTHON
 
-# Replace placeholders
-"$PYTHON" - "$TEMP_SCRIPT" "$TEMP_CODE" "$FUNCTIONS_FILE" << 'PYEOF'
+# Replace placeholders safely using Python
+"$PYTHON" - "$TEMP_SCRIPT" "$TEMP_CODE" "$FUNCTIONS_FILE" << 'PY'
 import sys
-fp, cf, ff = sys.argv[1], sys.argv[2], sys.argv[3]
-with open(fp) as f:
-    c = f.read().replace('CODE_FILE', cf).replace('FUNCTIONS_FILE', ff)
-with open(fp, 'w') as f:
-    f.write(c)
-PYEOF
+script_path = sys.argv[1]
+code_path = sys.argv[2]
+fns_path = sys.argv[3]
 
-# Run
+with open(script_path) as f:
+    content = f.read()
+
+content = content.replace('CODE_PATH_PLACEHOLDER', code_path)
+content = content.replace('FNS_PATH_PLACEHOLDER', fns_path)
+
+with open(script_path, 'w') as f:
+    f.write(content)
+PY
+
+# Run with timeout
 if command -v timeout &>/dev/null; then
     timeout "$TIMEOUT" "$PYTHON" "$TEMP_SCRIPT"
 else

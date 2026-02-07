@@ -5,17 +5,8 @@ Run Python code in a secure sandbox using [pydantic-monty](https://github.com/py
 ## Quick Start
 
 ```bash
-# Run directly from GitHub
+# Run directly from GitHub (uv caches automatically)
 uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(2 + 2)"
-```
-
-Or clone and run locally:
-
-```bash
-git clone https://github.com/zhouzhuojie/monty-skill.git
-cd monty-skill
-chmod +x monty.py
-./monty.py "print(2 + 2)"
 ```
 
 ## For AI Agents
@@ -43,10 +34,11 @@ External functions (defined in `functions.py`) can be called from sandboxed code
 
 ```bash
 # Run directly
-./monty.py "print(2 + 2)"
+uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(2 + 2)"
 
-# With external functions
-./monty.py "print(await greet('World'))" -f functions.py
+# With external functions (download functions.py first)
+curl -sL https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/functions.py > functions.py
+uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(await greet('World'))" -f functions.py
 ```
 
 ## Options
@@ -71,6 +63,9 @@ async def greet(name: str) -> str:
 ## Testing
 
 ```bash
+# Clone for local development
+git clone https://github.com/zhouzhuojie/monty-skill.git
+cd monty-skill
 uv run pytest test_monty.py -v
 ```
 

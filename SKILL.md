@@ -44,11 +44,12 @@ Code runs in an isolated environment with no filesystem/network/env access. Exte
 ## Usage
 
 ```bash
-# Run directly
-./monty.py "print(2 + 2)"
+# Run directly from GitHub
+uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(2 + 2)"
 
 # With external functions
-./monty.py "print(await greet('World'))" -f functions.py
+curl -sL https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/functions.py > functions.py
+uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(await greet('World'))" -f functions.py
 ```
 
 ## Options

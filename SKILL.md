@@ -9,7 +9,13 @@ Execute Python code safely without filesystem/network access.
 
 ## Installation
 
-Copy to your agent's skills directory:
+Run directly from GitHub:
+
+```bash
+uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(2 + 2)"
+```
+
+Or copy to your agent's skills directory:
 
 ```bash
 # For Claude
@@ -38,11 +44,8 @@ Code runs in an isolated environment with no filesystem/network/env access. Exte
 ## Usage
 
 ```bash
-# Run directly (requires chmod +x)
+# Run directly
 ./monty.py "print(2 + 2)"
-
-# Or via uv
-uv run monty.py "print(2 + 2)"
 
 # With external functions
 ./monty.py "print(await greet('World'))" -f functions.py

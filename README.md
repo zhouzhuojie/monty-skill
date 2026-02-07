@@ -2,26 +2,23 @@
 
 Run Python code in a secure sandbox using [pydantic-monty](https://github.com/pydantic/monty).
 
-## Installation
-
-### Quick Start
+## Quick Start
 
 ```bash
-# Clone and run
+# Run directly from GitHub
+uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(2 + 2)"
+```
+
+Or clone and run locally:
+
+```bash
 git clone https://github.com/zhouzhuojie/monty-skill.git
 cd monty-skill
 chmod +x monty.py
 ./monty.py "print(2 + 2)"
 ```
 
-### With uv
-
-```bash
-# Run without cloning
-uv run monty.py "print(2 + 2)" -p https://github.com/zhouzhuojie/monty-skill.git
-```
-
-### For AI Agents
+## For AI Agents
 
 Copy to your agent's skills directory:
 

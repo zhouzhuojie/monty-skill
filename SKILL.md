@@ -7,6 +7,10 @@ description: Execute Python code in a secure sandbox using pydantic-monty. Use w
 
 Execute Python code safely without filesystem/network access.
 
+## How It Works
+
+Code runs in an isolated environment with no filesystem/network/env access. External functions (defined in `functions.py`) enable controlled I/O.
+
 ## When to Use
 
 - Running LLM-generated Python code
@@ -22,9 +26,14 @@ Execute Python code safely without filesystem/network access.
 ## Usage
 
 ```bash
+# Run directly (requires chmod +x)
+./monty.py "print(2 + 2)"
+
+# Or via uv
 uv run monty.py "print(2 + 2)"
-uv run monty.py "sum([x ** 2 for x in range(1, 6)])"
-uv run monty.py "print(await greet('World'))" -f functions.py
+
+# With external functions
+./monty.py "print(await greet('World'))" -f functions.py
 ```
 
 ## Options
@@ -56,3 +65,10 @@ async def greet(name: str) -> str:
 - Classes, match statements
 - Third-party libraries
 - Direct filesystem/network access
+
+## Examples
+
+See `test_monty.py` for comprehensive examples including:
+- Arithmetic, variables, built-in functions
+- List comprehensions, lambdas, type hints
+- External function calls, error handling

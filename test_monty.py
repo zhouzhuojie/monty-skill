@@ -159,6 +159,35 @@ class TestComplexCombinations:
         assert code == 0 and out == "1240"
 
 
+class TestCustomExternalFunctions:
+    """Tests for user-defined external functions in functions.py."""
+
+    def test_random_numbers_count(self):
+        """Test that random_numbers returns correct count."""
+        code, out = run_monty("print(len(random_numbers(100)))")
+        assert code == 0 and out == "100"
+
+    def test_random_numbers_range(self):
+        """Test that random numbers are between 0 and 1."""
+        code, out = run_monty("nums = random_numbers(100); print(min(nums) >= 0 and max(nums) <= 1)")
+        assert code == 0 and out == "True"
+
+    def test_random_numbers_mean(self):
+        """Test that mean of 1000 random numbers is approximately 0.5."""
+        code, out = run_monty("nums = random_numbers(1000); mean = sum(nums)/len(nums); print(0.4 <= mean <= 0.6)")
+        assert code == 0 and out == "True"
+
+    def test_random_int_count(self):
+        """Test that random_int returns correct count."""
+        code, out = run_monty("print(len(random_int(1, 10, 50)))")
+        assert code == 0 and out == "50"
+
+    def test_random_int_range(self):
+        """Test that random integers are within specified range."""
+        code, out = run_monty("nums = random_int(1, 6, 100); print(min(nums) >= 1 and max(nums) <= 6)")
+        assert code == 0 and out == "True"
+
+
 class TestErrorCases:
     def test_syntax_error(self):
         assert run_monty_error("print(")

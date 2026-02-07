@@ -60,3 +60,17 @@ async def json_loads(text: str) -> dict[str, Any]:
     import json
 
     return json.loads(text)
+
+
+# Custom functions for testing custom external functions feature
+import random
+
+
+def random_numbers(count: int) -> list:
+    """Generate n random numbers between 0 and 1."""
+    return [random.random() for _ in range(count)]
+
+
+def random_int(min_val: int, max_val: int, count: int) -> list:
+    """Generate n random integers between min and max (inclusive)."""
+    return [random.randint(min_val, max_val) for _ in range(count)]

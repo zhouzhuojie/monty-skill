@@ -1,22 +1,23 @@
 # External functions for monty sandbox
-# Define async functions here that sandboxed code can call.
-# These run on the host and can access filesystem, network, etc.
-
 from typing import Any
+
 
 async def fetch(url: str) -> dict[str, Any]:
     """Fetch data from a URL."""
     import urllib.request
+
     try:
         with urllib.request.urlopen(url, timeout=10) as r:
-            data = r.read().decode('utf-8')[:1000]
+            data = r.read().decode("utf-8")[:1000]
             return {"status": "ok", "url": url, "data": data}
     except Exception as e:
         return {"status": "error", "url": url, "error": str(e)}
 
+
 async def greet(name: str) -> str:
     """Greet someone by name."""
     return f"Hello, {name}!"
+
 
 async def calculate(a: int, b: int, op: str) -> int:
     """Perform a calculation."""
@@ -28,26 +29,34 @@ async def calculate(a: int, b: int, op: str) -> int:
     }
     return ops.get(op, lambda x, y: 0)(a, b)
 
+
 async def timestamp() -> dict[str, Any]:
     """Get current timestamp."""
     import datetime
+
     now = datetime.datetime.now()
     return {"iso": now.isoformat(), "ts": now.timestamp()}
+
 
 async def capitalize(text: str) -> str:
     """Capitalize a string."""
     return text.capitalize()
 
+
 async def reverse(text: str) -> str:
     """Reverse a string."""
     return text[::-1]
 
+
 async def json_dumps(data: dict[str, Any]) -> str:
     """Convert dict to JSON string."""
     import json
+
     return json.dumps(data)
+
 
 async def json_loads(text: str) -> dict[str, Any]:
     """Parse JSON string."""
     import json
+
     return json.loads(text)

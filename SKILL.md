@@ -22,20 +22,9 @@ Execute Python code safely without filesystem/network access.
 ## Usage
 
 ```bash
-# Simple calculation
-uv run monty "print(2 + 2)"
-
-# Multi-line code
-uv run monty "
-total = sum(range(1, 6))
-print(f'Sum: {total}')
-"
-
-# With external functions
-uv run monty "print(await greet('World'))" -f functions.py
-
-# Custom timeout (seconds)
-uv run monty "time.sleep(1)" -t 5
+uv run monty.py "print(2 + 2)"
+uv run monty.py "sum([x ** 2 for x in range(1, 6)])"
+uv run monty.py "print(await greet('World'))" -f functions.py
 ```
 
 ## Options
@@ -47,11 +36,10 @@ uv run monty "time.sleep(1)" -t 5
 
 ## External Functions
 
-Define async functions in `functions.py` for sandboxed code to call:
+Define async functions in `functions.py`:
 
 ```python
 async def fetch(url: str) -> dict:
-    # Your implementation here
     return {"data": "example"}
 
 async def greet(name: str) -> str:
@@ -60,14 +48,11 @@ async def greet(name: str) -> str:
 
 ## Supported Python
 
-- Built-ins: `print`, `len`, `str`, `int`, `list`, `dict`, `range`, etc.
-- Stdlib: `sys`, `typing`, `asyncio`, `dataclasses`, `json`
-- Control flow: `if`, `for`, `while`, functions, async/await
-- Type hints, comprehensions, lambdas
+- Built-ins: `print`, `len`, `str`, `int`, `list`, `dict`, `range`
+- Control flow, functions, async/await, type hints
 
 ## Not Supported
 
-- Classes (coming soon)
-- Match statements (coming soon)
+- Classes, match statements
 - Third-party libraries
 - Direct filesystem/network access

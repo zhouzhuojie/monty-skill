@@ -3,7 +3,10 @@ name = "monty-skill"
 version = "0.1.0"
 description = "Run Python in a secure sandbox"
 requires-python = ">=3.10"
-dependencies = ["pydantic-monty"]
+dependencies = [
+    "pydantic-monty",
+    "pytest>=9.0.2",
+]
 
 [project.optional-dependencies]
 dev = ["pytest"]

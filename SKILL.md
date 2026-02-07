@@ -29,6 +29,13 @@ async def fetch(url: str) -> dict:
     return {"data": "example"}
 ```
 
+## Install
+
+```bash
+git clone https://github.com/zhouzhuojie/monty-skill.git
+cp -r monty-skill ~/.claude/skills/  # or ~/.pi/agent/skills/
+```
+
 ## Supported Python
 
 - Built-ins: `print`, `len`, `str`, `int`, `list`, `dict`, `range`
@@ -42,4 +49,4 @@ async def fetch(url: str) -> dict:
 
 ## Examples
 
-See `test_monty.py` for comprehensive examples including arithmetic, comprehensions, lambdas, type hints, and error handling.
+See `test_monty.py` for comprehensive examples.

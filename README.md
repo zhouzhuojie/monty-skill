@@ -25,23 +25,25 @@ async def greet(name: str) -> str:
 ```
 
 ```bash
-# Download functions.py
 curl -sL https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/functions.py > functions.py
-
-# Use with monty
 uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "print(await greet('World'))" -f functions.py
 ```
 
-## For AI Agents
+## Install for AI Agents
 
-Copy to your agent's skills directory:
+### Git Clone
 
 ```bash
-# Claude
-cp -r monty-skill ~/.claude/skills/
+# Clone and copy
+git clone https://github.com/zhouzhuojie/monty-skill.git
+cp -r monty-skill ~/.claude/skills/  # Claude
+cp -r monty-skill ~/.pi/agent/skills/  # Pi
+```
 
-# Pi
-cp -r monty-skill ~/.pi/agent/skills/
+### With npx (if supported)
+
+```bash
+npx monty-skill install
 ```
 
 ## Development

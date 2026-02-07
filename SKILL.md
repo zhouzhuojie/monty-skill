@@ -29,11 +29,18 @@ async def fetch(url: str) -> dict:
     return {"data": "example"}
 ```
 
-## Install
+## Install for Agents
+
+```bash
+npx skills add zhouzhuojie/monty-skill
+```
+
+Or manually:
 
 ```bash
 git clone https://github.com/zhouzhuojie/monty-skill.git
-cp -r monty-skill ~/.claude/skills/  # or ~/.pi/agent/skills/
+cp -r monty-skill ~/.claude/skills/  # Claude
+cp -r monty-skill ~/.pi/agent/skills/  # Pi
 ```
 
 ## Supported Python

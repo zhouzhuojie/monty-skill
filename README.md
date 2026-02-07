@@ -31,19 +31,8 @@ uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "
 
 ## Install for AI Agents
 
-### Git Clone
-
 ```bash
-# Clone and copy
-git clone https://github.com/zhouzhuojie/monty-skill.git
-cp -r monty-skill ~/.claude/skills/  # Claude
-cp -r monty-skill ~/.pi/agent/skills/  # Pi
-```
-
-### With npx (if supported)
-
-```bash
-npx monty-skill install
+npx skills add zhouzhuojie/monty-skill
 ```
 
 ## Development

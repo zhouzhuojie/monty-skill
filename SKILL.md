@@ -20,6 +20,7 @@ uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "
 | Flag | Description |
 |------|-------------|
 | `-f FILE` | Path to external functions file (default: `functions.py`) |
+| `-d FILE` | Requirements file for extra dependencies |
 | `-t SEC` | Timeout in seconds |
 
 ## External Functions
@@ -60,6 +61,34 @@ Then use in monty:
 ```bash
 uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "result = random_numbers(1000); print(f'Mean: {sum(result)/len(result):.4f}')" -f functions.py
 ```
+
+## Adding Extra Dependencies
+
+If your external functions require additional packages (e.g., cryptography, requests), you have two options:
+
+### Option 1: Use `-d` flag with a requirements file
+
+```bash
+# Create requirements.txt
+echo "cryptography" > requirements.txt
+
+# Run with extra dependencies
+uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "encrypt('secret')" -f functions.py -d requirements.txt
+```
+
+### Option 2: Add a comment in functions.py
+
+Add a special comment to your `functions.py`:
+
+```python
+# /// monty-deps: cryptography, requests
+
+import cryptography
+import requests
+...
+```
+
+Monty will automatically detect this and install the dependencies when the functions file is loaded.
 
 ## Install for Agents
 

@@ -15,6 +15,7 @@ uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "
 | Flag | Description |
 |------|-------------|
 | `-f FILE` | Path to external functions file |
+| `-d FILE` | Requirements file for extra dependencies |
 | `-t SEC` | Timeout in seconds |
 
 ## External Functions
@@ -36,6 +37,40 @@ You can download the default `functions.py` for reference:
 
 ```bash
 curl -sL https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/functions.py > functions.py
+```
+
+## Adding Extra Dependencies
+
+If your external functions require additional packages (e.g., cryptography, requests), you have three options:
+
+### Option 1: Use `-d` flag with a requirements file
+
+```bash
+# Create requirements.txt
+echo "cryptography" > requirements.txt
+
+# Run with extra dependencies
+uv run https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "encrypt('secret')" -f functions.py -d requirements.txt
+```
+
+### Option 2: Add a comment in functions.py
+
+Add a special comment to your `functions.py`:
+
+```python
+# /// monty-deps: cryptography, requests
+
+import cryptography
+import requests
+...
+```
+
+Monty will automatically detect this and install the dependencies.
+
+### Option 3: Use `--with` directly (advanced)
+
+```bash
+uv run --with cryptography --with requests https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "encrypt('secret')" -f functions.py
 ```
 
 ## Install for AI Agents

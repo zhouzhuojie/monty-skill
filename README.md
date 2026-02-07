@@ -38,6 +38,16 @@ You can download the default `functions.py` for reference:
 curl -sL https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/functions.py > functions.py
 ```
 
+## Adding Extra Dependencies
+
+If your external functions need packages like `cryptography` or `requests`, use `uv run --with`:
+
+```bash
+uv run --with cryptography --with requests https://raw.githubusercontent.com/zhouzhuojie/monty-skill/main/monty.py "encrypt('secret')" -f functions.py
+```
+
+> **Note:** The `--with` packages are only available to your external functions running on the host. The sandboxed code (LLM-generated) still cannot access these packages directly - it must call through your external functions. This maintains the security guarantee.
+
 ## Install for AI Agents
 
 ```bash
